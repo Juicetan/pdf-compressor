@@ -1,3 +1,7 @@
 /src
 /.idea
 /example
+/README.md
+/vite.config.mts
+/pnpm-lock.yaml
+/.gitignore
