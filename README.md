@@ -12,7 +12,7 @@ yarn add pdf-compressor
 ```
 
 ```bash
-pnpm i pdf-compressor
+pnpm add pdf-compressor
 ```
 
 ```bash
