@@ -21,11 +21,9 @@ bun add pdf-compressor
 
 ## Usage
 
-### compressFile args
-
-```javascript
+```typescript
 // just send to the function file and options (optional)
-const compressedFile = await compressFile(file, {
+const compressedFile = await compressPDF(file, {
     quality: 0.98, // from 0 to 1
     scale: 1, // which times to scale from original size
 });
