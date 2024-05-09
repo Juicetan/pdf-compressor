@@ -2,6 +2,7 @@ import { defineConfig } from 'vite'
 import path from 'node:path';
 import dts from 'vite-plugin-dts';
 import { nodePolyfills } from 'vite-plugin-node-polyfills';
+import topLevelAwait from "vite-plugin-top-level-await";
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -50,6 +51,7 @@ export default defineConfig({
     plugins: [
         dts({ include: ['src'] }),
         nodePolyfills(),
+        topLevelAwait(),
     ],
     // Node.js global to browser globalThis
     define: {

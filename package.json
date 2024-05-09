@@ -1,6 +1,6 @@
 {
   "name": "pdf-compressor",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Compress pdf files right in browser",
   "main": "dist/index.js",
   "homepage": "https://github.com/medzhidov/pdf-compressor",
@@ -37,6 +37,7 @@
     "@vitejs/plugin-vue": "^5.0.4",
     "vite": "^5.2.11",
     "vite-plugin-dts": "^3.9.1",
+    "vite-plugin-top-level-await": "^1.4.1",
     "vue": "^3.4.27"
   }
 }
