@@ -1,6 +1,6 @@
 {
   "name": "pdf-compressor",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Compress pdf files right in browser",
   "main": "dist/index.js",
   "homepage": "https://github.com/medzhidov/pdf-compressor",
