@@ -1,6 +1,6 @@
 # PDF compressor
 
-Compress pdf and img in browser.
+Compress pdf right in browser.
 
 # Installation
 ```bash
