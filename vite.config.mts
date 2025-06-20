@@ -6,55 +6,57 @@ import topLevelAwait from "vite-plugin-top-level-await";
 
 // https://vitejs.dev/config/
 export default defineConfig({
-    server: {
-        open: 'example/index.html',
+  server: {
+    open: 'index.html',
+  },
+  worker: {
+    rollupOptions: {
+      output: {
+        entryFileNames: `[name].js`,
+        chunkFileNames: `[name].js`,
+        assetFileNames: `[name].[ext]`,
+      }
+    }
+  },
+  build: {
+    target: "esnext",
+    outDir: 'dist',
+    assetsDir: '',
+    copyPublicDir: false,
+    lib: {
+      entry: path.resolve(__dirname, 'src/index.ts'),
+      formats: ['es'],
     },
-    worker: {
-        rollupOptions: {
-            output: {
-                entryFileNames: `[name].js`,
-                chunkFileNames: `[name].js`,
-                assetFileNames: `[name].[ext]`,
-            }
+    rollupOptions: {
+      input: {
+        main: path.resolve(__dirname, 'index.html'),
+        lib: path.resolve(__dirname, 'src/index.ts'),
+      },
+      output: {
+        entryFileNames: `[name].js`,
+        chunkFileNames: `[name].js`,
+        assetFileNames: `[name].[ext]`,
+        manualChunks() {
+          return 'index.js';
         }
+      },
     },
-    build: {
-        target: "esnext",
-        outDir: 'dist',
-        assetsDir: '',
-        copyPublicDir: false,
-        lib: {
-            entry: path.resolve(__dirname, 'src/index.ts'),
-            formats: ['es'],
-        },
-        rollupOptions: {
-            // input: path.resolve(__dirname, 'src/index.js'),
-            output: {
-                entryFileNames: `[name].js`,
-                chunkFileNames: `[name].js`,
-                assetFileNames: `[name].[ext]`,
-                // Все чанки пишем в один файл
-                manualChunks() {
-                    return 'index.js';
-                }
-            },
-        },
+  },
+  esbuild: {
+    target: "esnext",
+  },
+  optimizeDeps: {
+    esbuildOptions: {
+      target: "esnext",
     },
-    esbuild: {
-        target: "esnext",
-    },
-    optimizeDeps:{
-        esbuildOptions: {
-            target: "esnext",
-        },
-    },
-    plugins: [
-        dts({ include: ['src'] }),
-        nodePolyfills(),
-        topLevelAwait(),
-    ],
-    // Node.js global to browser globalThis
-    define: {
-        global: 'globalThis',
-    },
+  },
+  plugins: [
+    dts({ include: ['src'] }),
+    nodePolyfills(),
+    topLevelAwait(),
+  ],
+  // Node.js global to browser globalThis
+  define: {
+    global: 'globalThis',
+  },
 })
