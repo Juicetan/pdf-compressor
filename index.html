@@ -67,6 +67,35 @@
           }
         }
       }
+      .transformer-wrap{
+        padding: 40px 20px;
+        .dropzone{
+          user-select: none;
+          cursor: pointer;
+          border-radius: 5px;
+          border: 2px dashed gray;
+          text-align: center;
+          height: 70px;
+          font-size: 14px;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          transition: background-color 0.2s linear, border 0.2s linear, color 0.2s linear;
+          max-width: 600px;
+          margin-left: auto;
+          margin-right: auto;
+          &:hover{
+            border: 2px solid lightgray;
+            background-color: lightgray;
+            color: black;
+          }
+          &.highlight{
+            border: 2px solid #2D9BF0;
+            color: white;
+            background-color: rgba(45, 155, 240, 0.5);
+          }
+        }
+      }
     }
   </style>
 </head>
@@ -82,13 +111,152 @@
       </div>
     </div>
     <div class="transformer-wrap">
-      <div class="dropzone"></div>
+      <div class="dropzone">Drop a PDF here or<br>click to select from your local files.</div>
     </div>
   </div>
   <script type="module">
     import compressPDF from './src/index';
 
+    const Deferred = function(){
+      var def = this;
+      /**
+       * @instance
+       * @member {external:Promise} promise Instance of an ES6 Promise to be fulfilled.
+       */
+      this.promise = new Promise(function(resolve,reject){
+        /**
+         * @instance
+         * @member {function} resolve Callback to be invoked when the asychronous task that initiated the promise is successfully completed.
+         */
+        def.resolve = resolve;
+        /**
+         * @instance
+         * @member {function} reject Callback to be invoked when the asychronous task that initiated the promise has failed to complete successfully.
+         */
+        def.reject = reject;
+      });
+
+      this.then = this.promise.then.bind(this.promise);
+      this.catch = this.promise.catch.bind(this.promise);
+    };
+
+    const FileUtil = {
+      pickFile: function(opts){
+        opts = opts || {};
+        var def = new Deferred();
+        var $body = document.querySelector('body');
+        var $input = document.createElement('input');
+        $input.setAttribute('type', 'file');
+        $input.style.position = 'absolute';
+        $input.style.width = '1px';
+        $input.style.height = '1px';
+        $input.style.opacity = '0';
+        if(opts.accept){
+          $input.setAttribute('accept',opts.accept);
+        }
+        if(opts.multiple){
+          $input.setAttribute('multiple', 'multiple');
+        }
+
+        $input.addEventListener('change', function(){
+          def.resolve(this.files);
+          $input.remove();
+        });
+        $input.addEventListener('cancel', function(e){
+          def.reject('canceled');
+          $input.remove();
+        });
+        $body.appendChild($input);
+        $input.click();
+
+        return def.promise;
+      }
+    }
+
+    class FileDropArea{
+      constructor($el){
+        this.$el = $el;
+        this._isHover = false;
+        this.initializeHandlers();
+        this.handlers = [];
+      }
+
+      get isHover(){
+        return this._isHover;
+      }
+
+      set isHover(newVal){
+        this._isHover = newVal;
+        if(newVal){
+          this.$el.classList.add('highlight');
+        } else{
+          this.$el.classList.remove('highlight');
+        }
+      }
+
+      onFileSelect(handlerFn){
+        this.handlers.push(handlerFn);
+      }
+
+      emit(payload){
+        this.handlers.forEach((fn) => {
+          fn(payload);
+        });
+      }
+
+      initializeHandlers(){
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach((eventName) => {
+          this.$el.addEventListener(eventName, (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+          }, false);
+        });
+
+        ['dragenter', 'dragover'].forEach((eventName) => {
+          this.$el.addEventListener(eventName, (e) => {
+            this.isHover = true;
+          }, false);
+        });
+        
+        ['dragleave', 'drop'].forEach((eventName) => {
+          this.$el.addEventListener(eventName, (e) => {
+            this.isHover = false;
+          }, false);
+        });
+
+        this.$el.addEventListener('drop', (e) => {
+          var data = e.dataTransfer;
+          var files = data.files;
+          this.addFiles(files);
+        }, false);
+
+        this.$el.addEventListener('click', (e) => {
+          this.manualPickFiles();
+        })
+      }
+
+      addFiles(files){
+        if(files){
+          this.emit(files);
+        }
+      }
+
+      manualPickFiles(){
+        FileUtil.pickFile({
+          accept: 'pdf/*',
+          multiple: false
+        }).then((files) => {
+          if(files){
+            this.emit(files)
+          }
+        })
+      }
+    }
     
+    const $fileDropzone = new FileDropArea(document.querySelector('.dropzone'));
+    $fileDropzone.onFileSelect((files) => {
+      console.log('> ok', files);
+    })
   </script>
 </body>
 </html>
