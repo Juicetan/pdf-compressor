@@ -1,7 +1,6 @@
 import * as pdfjsLib from "pdfjs-dist/legacy/build/pdf.mjs";
-import PDFJSWorker from "pdfjs-dist/legacy/build/pdf.worker.mjs?url";
 
-pdfjsLib.GlobalWorkerOptions.workerSrc = PDFJSWorker;
+pdfjsLib.GlobalWorkerOptions.workerSrc = './pdf.worker.min.mjs';
 
 const readPDF = (pdf_url) => pdfjsLib.getDocument(pdf_url).promise;
 

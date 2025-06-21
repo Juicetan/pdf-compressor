@@ -1,0 +1,19 @@
+{
+  "name": "Compressor",
+  "icons": [{
+    "src": "/appicon.png",
+    "type": "image/png",
+    "sizes": "192x192",
+    "purpose": "maskable"
+  }],
+  "splash_screens": [{
+    "src": "/splash.png",
+    "type": "image/png",
+    "sizes": "1080x1920"
+  }],
+  "display": "standalone",
+  "orientation": "portrait",
+  "start_url": "/index.html",
+  "theme_color": "#1D1E22",
+  "background_color": "#FFFFFF"
+}
