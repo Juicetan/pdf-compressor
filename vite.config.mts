@@ -10,6 +10,8 @@ export default defineConfig({
     open: 'index.html',
   },
   worker: {
+    format: 'es',
+    plugins: [],
     rollupOptions: {
       output: {
         entryFileNames: `[name].js`,
@@ -22,7 +24,8 @@ export default defineConfig({
     target: "esnext",
     outDir: 'dist',
     assetsDir: '',
-    copyPublicDir: false,
+    copyPublicDir: true,
+    assetsInlineLimit: 0,
     lib: {
       entry: path.resolve(__dirname, 'src/index.ts'),
       formats: ['es'],
