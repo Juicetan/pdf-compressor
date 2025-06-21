@@ -8,11 +8,12 @@ export interface IOptions {
     scale?: number;
 }
 
-export const compressPDF = async (file: File, options: IOptions = {}): Promise<File> => {
+export const compressPDF = async (file: File, options: IOptions = {}, progressHandler): Promise<File> => {
     options = {
         quality: 0.96,
         scale: 1,
         ...options,
+        progressHandler: progressHandler
     }
 
     const pdfDocumentProxy = await readPDF(`data:${file.type};base64,${await fileToBase64(file, true)}`);

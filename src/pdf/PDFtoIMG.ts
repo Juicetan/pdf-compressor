@@ -22,7 +22,7 @@ const renderAllPages = (pdfDocumentProxy, options: IOptions) => {
   const process = async function(){
     if(completed === pdfDocumentProxy.numPages){
       images = images.filter((img) => img !== undefined)
-      console.log('> done images', images);      
+      console.log('> done images', images.length);      
       def.resolve(images);
       return;
     } else if(curConcurrency >= maxConcurrency || !queue.length){
@@ -40,6 +40,12 @@ const renderAllPages = (pdfDocumentProxy, options: IOptions) => {
     let renderedPage = await renderPage(pdfPageProxy, options);
     images[pageNum - 1] = JSON.parse(JSON.stringify(renderedPage));
     completed++;
+    if(options.progressHandler){
+      options.progressHandler({
+        completed: completed,
+        total: pdfDocumentProxy.numPages
+      })
+    }
     curConcurrency--;
     process();
   }

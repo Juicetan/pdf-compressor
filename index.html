@@ -79,6 +79,9 @@
           height: 100%;
           max-height: 100px;
         }
+        .meta-wrap{
+          text-align: left;
+        }
         .title{
           font-weight: bold;
           font-size: 30px;
@@ -95,6 +98,9 @@
             grid-template-columns: none;
             .logo{
               max-height: 50px;
+            }
+            .meta-wrap{
+              text-align: center;
             }
             .title{
               font-size: 20px;
@@ -145,11 +151,14 @@
           .con-group{
             display: flex;
             gap: 5px;
+            output{
+              min-width: 40px;
+            }
           }
         }
         .loader{
           position: absolute;
-          top: 0;
+          top: 40px;
           bottom: 0;
           right: 0;
           left: 0;
@@ -159,12 +168,22 @@
           visibility: hidden;
           transition: opacity 0.1s linear, visibility 0s linear 0.1s;
           .animation-container{
+            position: relative;
             height: 100%;
             width: 100%;
             max-width: 600px;
-            max-height: 200px;
+            max-height: 150px;
             margin-left: auto;
             margin-right: auto;
+            .percentage{
+              position: absolute;
+              left: 50%;
+              top: 50%;
+              transform: translate3d(-50%, -50%, 0);
+              font-size: 50px;
+              font-weight: bold;
+              opacity: 0.5;
+            }
             canvas{
               width: 100%;
               height: 100%;
@@ -213,7 +232,9 @@
         </div>
       </div>
       <div class="loader">
-        <div class="animation-container"></div>
+        <div class="animation-container">
+          <div class="percentage"></div>
+        </div>
       </div>
     </div>
   </div>
@@ -384,7 +405,7 @@
     }
     
     class PDFManager{
-      static async compress(files){
+      static async compress(files, progressHandler){
         const file = files[0];
         console.log('worker url', pdfjsLib?.GlobalWorkerOptions?.workerSrc)
         console.log('>>> before compression');
@@ -398,7 +419,7 @@
         const compressedFile = await compressPDF(file, {
           scale: scale,
           quality: quality
-        });
+        }, progressHandler);
         const end = Date.now();
         console.log('>>> after compression');
         console.log('> file', compressedFile);
@@ -610,11 +631,15 @@
     }
     const $loader = new AnimatedLoader(document.querySelector('.loader'));
 
+    const $percentage = document.querySelector('.percentage');
+
     const $fileDropzone = new FileDropArea(document.querySelector('.dropzone'));
     $fileDropzone.onFileSelect((files) => {
       console.log('> ok', files);
       $loader.show();
-      PDFManager.compress(files).then((compressedFile) => {
+      PDFManager.compress(files, (progress) => {
+        $percentage.innerHTML = Math.round(progress.completed/progress.total*100) + '%';
+      }).then((compressedFile) => {
         $loader.hide();
         setTimeout(() => {
           FileUtil.downloadFile(compressedFile);
@@ -622,6 +647,8 @@
       }).catch((e) => {
         console.error('> failed to compress', e);
         $loader.hide();
+      }).then(() => {
+        $percentage.innerHTML = '';
       });
     });
   </script>
